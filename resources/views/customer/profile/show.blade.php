@@ -37,6 +37,9 @@
                                     <div class="col-md-6">
                                         <label for="name" class="form-label">Name</label>
                                         <input type="text" class="form-control" id="name" name="name" value="{{ $customer->name }}">
+                                        @error('name')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     
                                     <div class="col-md-6">
@@ -63,6 +66,9 @@
                                             <option value="female" {{ $customer->gender == 'female' ? 'selected' : '' }}>Female</option>
                                             <option value="other" {{ $customer->gender == 'other' ? 'selected' : '' }}>Other</option>
                                         </select>
+                                        @error('gender')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     
                                     <div class="col-md-6">
@@ -73,21 +79,33 @@
                                     <div class="col-md-6">
                                         <label for="address" class="form-label">Address</label>
                                         <input type="text" class="form-control" id="address" name="address" value="{{ $customer->address }}">
+                                        @error('address')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     
                                     <div class="col-md-6">
                                         <label for="software" class="form-label">Software</label>
                                         <input type="text" class="form-control" id="software" name="software" value="{{ $customer->software }}">
+                                        @error('software')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-6">
                                         <label for="website" class="form-label">Website</label>
                                         <input type="url" class="form-control" id="website" name="website" value="{{ $customer->website }}">
+                                        @error('website')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-6">
                                         <label for="tax_number" class="form-label">Tax Number</label>
                                         <input type="number" class="form-control" id="tax_number" name="tax_number" value="{{ $customer->tax_number }}">
+                                        @error('tax_number')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>

@@ -24,7 +24,13 @@ class UserController extends Controller
 
     private function getDataTable()
     {
-        $data = User::query();
+        $data = User::query()
+            ->leftJoin('departments', 'users.department_id', '=', 'departments.id')
+            ->select([
+                'users.*',
+                'departments.name as department_name'
+            ]);
+            
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function($row) {
@@ -71,11 +77,15 @@ class UserController extends Controller
     private function validateRequest(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|unique:customers,email|unique:users,email',
+            'email' => 'required|email|max:255|unique:customers,email|unique:users,email',
             'phone' => 'required|digits_between:10,11|unique:customers,phone|unique:users,phone',
-            'name' => 'required',
-            'password' => 'required|min:8',
+            'name' => 'required|string|max:255',
+            'date_of_birth' => 'nullable|date',
+            'address' => 'nullable|string|max:255',
             'profile_picture' => 'nullable|image',
+            'department_id' => 'nullable|exists:departments,id',
+            'role' => 'nullable|exists:roles,id',
+            'password' => 'required|string|min:8',
         ]);
     }
 
@@ -143,10 +153,15 @@ class UserController extends Controller
     private function validateUpdateRequest(Request $request, $id)
     {
         $request->validate([
-            'email' => 'required|email|unique:customers,email|unique:users,email,' . $id,
+            'email' => 'required|email|max:255|unique:customers,email|unique:users,email,' . $id,
             'phone' => 'required|digits_between:10,11|unique:customers,phone|unique:users,phone,' . $id,
+            'name' => 'required|string|max:255',
+            'date_of_birth' => 'nullable|date',
+            'address' => 'nullable|string|max:255',
             'profile_picture' => 'nullable|image',
-            'name' => 'required',
+            'department_id' => 'nullable|exists:departments,id',
+            'role' => 'nullable|exists:roles,id',
+            'password' => 'nullable|string|min:8',
         ]);
     }
 

@@ -77,17 +77,26 @@
                                             <option value="male" {{ $user->gender == 'male' ? 'selected' : '' }}>Male</option>
                                             <option value="female" {{ $user->gender == 'female' ? 'selected' : '' }}>Female</option>
                                             <option value="other" {{ $user->gender == 'other' ? 'selected' : '' }}>Other</option>
+                                            @error('gender')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </select>
                                     </div>
                                     
                                     <div class="col-md-6">
                                         <label for="date_of_birth" class="form-label">Date of Birth</label>
                                         <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="{{ $user->date_of_birth }}">
+                                        @error('date_of_birth')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     
                                     <div class="col-md-6">
                                         <label for="address" class="form-label">Address</label>
                                         <input type="text" class="form-control" id="address" name="address" value="{{ $user->address }}">
+                                        @error('address')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     
                                     <div class="col-md-6">
@@ -116,6 +125,17 @@
                                                 </option>
                                             @endforeach
                                         </select>
+                                        @error('department_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="password" class="form-label">Password</label>
+                                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password">
+                                        @error('password')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-6">
@@ -140,6 +160,7 @@
                     </form>
                 </div>
             </div>
+            
         </div>
     </div>
 </div>

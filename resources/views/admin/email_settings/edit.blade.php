@@ -111,6 +111,88 @@
             </button>
             </form>
         </div>
+
+        <!-- User Guide -->
+        <div class="col-md-8 mt-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="card-title mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Setup Guide
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Part 1: Gmail Configuration -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold">1. Configure Gmail for the application</h5>
+                        <div class="ms-4">
+                            <p class="fw-bold mb-2">Step 1: Enable 2-Factor Authentication (2FA)</p>
+                            <ul class="list-unstyled ms-3">
+                                <li><i class="bi bi-dot"></i>Go to <a href="https://myaccount.google.com" target="_blank">Google Account Settings</a></li>
+                                <li><i class="bi bi-dot"></i>Go to "Security"</li>
+                                <li><i class="bi bi-dot"></i>Enable "2-Step Verification"</li>
+                            </ul>
+
+                            <p class="fw-bold mb-2 mt-3">Step 2: Create App Password</p>
+                            <ul class="list-unstyled ms-3">
+                                <li><i class="bi bi-dot"></i>After enabling 2FA, go to "App Passwords"</li>
+                                <li><i class="bi bi-dot"></i>Select "Other" from the app list</li>
+                                <li><i class="bi bi-dot"></i>Name the app (e.g., "Mail System")</li>
+                                <li><i class="bi bi-dot"></i>Copy the generated password to use in the settings</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Part 2: Fill in the information -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold">2. Fill in the configuration information</h5>
+                        <div class="ms-4">
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-dot"></i><span class="fw-semibold">Username:</span> Enter your Gmail address</li>
+                                <li><i class="bi bi-dot"></i><span class="fw-semibold">App Password:</span> Enter the app password created in the previous step</li>
+                                <li><i class="bi bi-dot"></i><span class="fw-semibold">From Address:</span> The email address displayed when sending (should be the same as Username)</li>
+                                <li><i class="bi bi-dot"></i><span class="fw-semibold">From Name:</span> The name displayed in the recipient's email</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Part 3: Check -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold">3. Check the configuration</h5>
+                        <div class="ms-4">
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-dot"></i>Click "Save Settings" to save the configuration</li>
+                                <li><i class="bi bi-dot"></i>Use the "Send Test Email" button to send a test email</li>
+                                <li><i class="bi bi-dot"></i>Check your inbox to confirm the email was sent successfully</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Part 4: Important Notes -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Important Notes</h5>
+                        <div class="alert alert-info">
+                            <ul class="list-unstyled mb-0">
+                                <li><i class="bi bi-exclamation-circle me-2"></i>Do not share the app password with others</li>
+                                <li><i class="bi bi-exclamation-circle me-2"></i>Ensure the sending email address is valid to avoid being marked as spam</li>
+                                <li><i class="bi bi-exclamation-circle me-2"></i>If you change your Gmail password, you need to create a new app password</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Part 5: Support -->
+                    <div>
+                        <h5 class="fw-bold">Support</h5>
+                        <div class="alert alert-secondary">
+                            <p class="mb-2">If you encounter difficulties during the setup process, please contact:</p>
+                            <ul class="list-unstyled mb-0">
+                                <li><i class="bi bi-envelope-fill me-2"></i>Email: nhokkho18@gmail.com</li>
+                                <li><i class="bi bi-telephone-fill me-2"></i>Hotline: 0819530009</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection

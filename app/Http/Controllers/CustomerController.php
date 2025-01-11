@@ -40,11 +40,11 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|unique:customers,email|unique:users,email',
+            'email' => 'required|email|max:255|unique:customers,email|unique:users,email',
             'phone' => 'required|digits_between:10,11|unique:customers,phone|unique:users,phone',
             'profile_picture' => 'nullable|image',
-            'name' => 'required',
-            'password' => 'required|min:8',
+            'name' => 'required|min:3|max:50', // Tên phải từ 3 đến 50 ký tự
+            'password' => 'required|min:8|max:20', // Mật khẩu từ 8 đến 20 ký tự
             'date_of_birth' => 'nullable|date',
             'tax_number' => 'nullable|digits_between:10,13',
         ]);
@@ -78,22 +78,32 @@ class CustomerController extends Controller
     public function edit($id)
     {
         $customer = Customer::findOrFail($id);
-        return view('admin.customers.edit', compact('customer'));
+        $tickets = $customer->tickets()->get();
+        return view('admin.customers.edit', compact('customer', 'tickets'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'email' => 'required|email|unique:customers,email,' . $id . '|unique:users,email',
+            'email' => 'required|email|max:255|unique:customers,email,' . $id . '|unique:users,email',
             'phone' => 'required|digits_between:10,11|unique:customers,phone,' . $id . '|unique:users,phone',
             'profile_picture' => 'nullable|image',
-            'name' => 'required',
+            'gender' => 'nullable|string|in:male,female,other',
+            'software' => 'nullable|string|max:255',
+            'website' => 'nullable|url|max:255',
+            'name' => 'required|string|max:255',
             'date_of_birth' => 'nullable|date',
             'tax_number' => 'nullable|digits_between:10,13',
         ]);
 
         $customer = Customer::findOrFail($id);
         $customer->fill($request->except('profile_picture'));
+        
+        if ($request->has('is_verified')) {
+            $customer->markEmailAsVerified();
+        } else {
+            $customer->email_verified_at = null;
+        }
 
         if ($request->hasFile('profile_picture')) {
             $customer->profile_picture = $request->file('profile_picture')->store('profile_pictures', 'public');

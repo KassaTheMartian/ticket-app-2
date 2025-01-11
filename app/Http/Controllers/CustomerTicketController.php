@@ -12,6 +12,7 @@ use App\Mail\SendTicketEmail;
 use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
+use App\Mail\NewTicketAssignedEmail;
 
 class CustomerTicketController extends Controller
 {
@@ -117,6 +118,7 @@ class CustomerTicketController extends Controller
         $validated = $this->validateTicket($request);
         $validated['customer_id'] = auth()->guard('customer')->id();
         $validated['status'] = 'new';
+        $validated['priority'] = 'medium';
 
         $ticket = Ticket::create($validated);
         $ticket->logAction(null, $ticket->__toString());
@@ -135,7 +137,7 @@ class CustomerTicketController extends Controller
             'description' => 'required',
             'ticket_type_id' => 'required',
             'department_id' => 'required',
-            'attachments.*' => 'file|max:2048',
+            'attachments.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,doc,docx,pdf|max:10240',
             'g-recaptcha-response' => 'recaptcha',
         ]);
     }
@@ -152,7 +154,13 @@ class CustomerTicketController extends Controller
             'status' => $ticket->status,
             'created_at' =>$ticket->created_at ? Carbon::parse($ticket->created_at)->format('d M Y H:i:s') : ''
         ];
-
         Mail::to(auth()->guard('customer')->user()->email)->queue(new SendTicketEmail($ticketData));
+
+        $departmentEmails = $ticket->department->users->pluck('email')->toArray();
+        foreach ($departmentEmails as $email) {
+            $ticketData['staff_name'] = $ticket->department->users->where('email', $email)->first()->name;
+            $ticketData['ticket_url'] = route('admin.tickets.edit', $ticket->id);
+            Mail::to($email)->queue(new NewTicketAssignedEmail($ticketData));
+        }
     }
 }

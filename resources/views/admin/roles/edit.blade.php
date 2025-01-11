@@ -121,112 +121,132 @@
 <script type="text/javascript">
         var app = angular.module('role', []);
 
-        app.controller('roleController', function($scope) {
-
-        var allRoles = @json($routes);
-        var roles = allRoles.filter(function(role) {
-            return !role.startsWith('admin.auth');
-        });
-        var permissions = @json($permissions ?? []);
-        $scope.roles = roles;
-        $scope.selectedRoles = permissions;
-        $scope.checkAll = false;
-        $scope.prefixGroups = {};
-
-        // Format route name for display
-        function formatRouteName(route) {
-            // Remove 'admin.' prefix
-            let name = route.replace(/^admin\./, '');
-            // Split by dots
-            let parts = name.split('.');
-            // Capitalize each part and join with space
-            return parts.map(part => {
-                return part.charAt(0).toUpperCase() + part.slice(1);
-            }).join(' ');
-        }
-
-        // Format prefix name for display
-        function formatPrefixName(prefix) {
-            let name = prefix.replace(/^admin\./, '');
-            name = name.charAt(0).toUpperCase() + name.slice(1);
-            return name.replace('.', ' ');
-        }
-
-        // Generate prefix groups
-        $scope.roles.forEach(function(role) {
-            var parts = role.split('.');
-            var prefix = parts[0] + (parts[1] ? '.' + parts[1] : '');
-            
-            if (!$scope.prefixGroups[prefix]) {
-                $scope.prefixGroups[prefix] = {
-                    count: 1,
-                    displayName: formatPrefixName(prefix)
-                };
-            } else {
-                $scope.prefixGroups[prefix].count++;
-            }
-        });
-
-        // Add formatted name to scope
-        $scope.getFormattedName = formatRouteName;
-
-        $scope.isChecked = function(role) {
-            return $scope.selectedRoles.indexOf(role) !== -1;
-        };
-
-        $scope.toggleCheck = function(role) {
-            if ($scope.isAuthRole(role)) {
-                return;
-            }
-            var idx = $scope.selectedRoles.indexOf(role);
-            if (idx === -1) {
-                $scope.selectedRoles.push(role);
-            } else {
-                $scope.selectedRoles.splice(idx, 1);
-            }
-
-            $scope.checkAll = $scope.selectedRoles.length === $scope.roles.length;
-        };
-
-        $scope.toggleCheckAll = function() {
-            if ($scope.checkAll) {
-                $scope.selectedRoles = angular.copy($scope.roles);
-            } else {
-                $scope.selectedRoles = [];
-            }
-        };
-
-        $scope.clearSelection = function() {
-            $scope.selectedRoles = [];
-            $scope.checkAll = false;
-        };
-
-        $scope.selectByPrefix = function(prefix) {
-            var filteredRoles = $scope.roles.filter(function(role) {
-                return role.startsWith(prefix);
-            });
-
-            var allSelected = filteredRoles.every(function(role) {
-                return $scope.selectedRoles.indexOf(role) !== -1;
-            });
-
-            if (allSelected) {
-                filteredRoles.forEach(function(role) {
-                    var idx = $scope.selectedRoles.indexOf(role);
-                    if (idx !== -1) {
-                        $scope.selectedRoles.splice(idx, 1);
-                    }
-                });
-            } else {
-                filteredRoles.forEach(function(role) {
-                    if ($scope.selectedRoles.indexOf(role) === -1) {
-                        $scope.selectedRoles.push(role);
-                    }
-                });
-            }
-
-            $scope.checkAll = $scope.selectedRoles.length === $scope.roles.length;
-        };
+app.controller('roleController', function($scope) {
+    var allRoles = @json($routes);
+    var roles = allRoles.filter(function(role) {
+        return !role.startsWith('admin.auth');
     });
+    var permissions = @json($permissions ?? []);
+    
+    // Initialize scope variables
+    $scope.roles = roles;
+    $scope.selectedRoles = permissions;
+    $scope.checkAll = false;
+    $scope.prefixGroups = {};
+    $scope.totalSelected = permissions.length; // Add counter for selected roles
+
+    // Format route name for display
+    function formatRouteName(route) {
+        let name = route.replace(/^admin\./, '');
+        let parts = name.split('.');
+        return parts.map(part => {
+            return part.charAt(0).toUpperCase() + part.slice(1);
+        }).join(' ');
+    }
+
+    // Format prefix name for display
+    function formatPrefixName(prefix) {
+        let name = prefix.replace(/^admin\./, '');
+        name = name.charAt(0).toUpperCase() + name.slice(1);
+        return name.replace('.', ' ');
+    }
+
+    // Generate prefix groups
+    $scope.roles.forEach(function(role) {
+        var parts = role.split('.');
+        var prefix = parts[0] + (parts[1] ? '.' + parts[1] : '');
+        
+        if (!$scope.prefixGroups[prefix]) {
+            $scope.prefixGroups[prefix] = {
+                count: 1,
+                displayName: formatPrefixName(prefix)
+            };
+        } else {
+            $scope.prefixGroups[prefix].count++;
+        }
+    });
+
+    $scope.getFormattedName = formatRouteName;
+
+    $scope.isChecked = function(role) {
+        return $scope.selectedRoles.indexOf(role) !== -1;
+    };
+
+    $scope.isAuthRole = function(role) {
+        return role.startsWith('admin.auth');
+    };
+
+    // Modified toggle check function with counter update
+    $scope.toggleCheck = function(role) {
+        if ($scope.isAuthRole(role)) {
+            return;
+        }
+        var idx = $scope.selectedRoles.indexOf(role);
+        if (idx === -1) {
+            $scope.selectedRoles.push(role);
+        } else {
+            $scope.selectedRoles.splice(idx, 1);
+        }
+        
+        // Update total selected counter
+        $scope.totalSelected = $scope.selectedRoles.length;
+        // Update checkAll status
+        $scope.checkAll = $scope.selectedRoles.length === $scope.roles.length;
+        
+        // Force Angular to update the view
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
+    };
+
+    // Modified toggle checkAll function
+    $scope.toggleCheckAll = function() {
+        if ($scope.checkAll) {
+            $scope.selectedRoles = angular.copy($scope.roles.filter(role => !$scope.isAuthRole(role)));
+        } else {
+            $scope.selectedRoles = [];
+        }
+        // Update total selected counter
+        $scope.totalSelected = $scope.selectedRoles.length;
+    };
+
+    // Modified clear selection function
+    $scope.clearSelection = function() {
+        $scope.selectedRoles = [];
+        $scope.checkAll = false;
+        $scope.totalSelected = 0;
+    };
+
+    // Modified select by prefix function
+    $scope.selectByPrefix = function(prefix) {
+        var filteredRoles = $scope.roles.filter(function(role) {
+            return role.startsWith(prefix) && !$scope.isAuthRole(role);
+        });
+
+        var allSelected = filteredRoles.every(function(role) {
+            return $scope.selectedRoles.indexOf(role) !== -1;
+        });
+
+        if (allSelected) {
+            filteredRoles.forEach(function(role) {
+                var idx = $scope.selectedRoles.indexOf(role);
+                if (idx !== -1) {
+                    $scope.selectedRoles.splice(idx, 1);
+                }
+            });
+        } else {
+            filteredRoles.forEach(function(role) {
+                if ($scope.selectedRoles.indexOf(role) === -1) {
+                    $scope.selectedRoles.push(role);
+                }
+            });
+        }
+
+        // Update total selected counter
+        $scope.totalSelected = $scope.selectedRoles.length;
+        // Update checkAll status
+        $scope.checkAll = $scope.selectedRoles.length === $scope.roles.length;
+    };
+});
 </script>
 @endsection

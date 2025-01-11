@@ -89,7 +89,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="{{ route('customer.dashboard') }}">
                 <i class="fas fa-ticket-alt me-2"></i>
                 Tickies
             </a>

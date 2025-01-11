@@ -30,6 +30,7 @@
                             <th>Name</th>
                             <th>Email</th>
                             <th>Phone</th>
+                            <th>Department</th>
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
@@ -72,6 +73,7 @@
             {data: 'name', name: 'name'},
             {data: 'email', name: 'email'},
             {data: 'phone', name: 'phone'},
+            {data: 'department_name', name: 'departments.name', orderable: true}, // Updated this line
             {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'}
         ],
         responsive: true,

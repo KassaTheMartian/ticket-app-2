@@ -11,8 +11,10 @@ use App\Models\TicketLog;
 use App\Models\User;
 use App\Mail\TicketUpdatedEmail;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\NewTicketAssignedEmail;
 use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
+
 
 class TicketController extends Controller
 {
@@ -191,18 +193,34 @@ class TicketController extends Controller
         ]);
 
         $ticket = Ticket::find($id);
-
+        
+        // Lưu department_id cũ
+        $oldDepartmentId = $ticket->department_id;
+        
+        // Cập nhật ticket
+        $ticket->fill($request->all());
+        
+        // Kiểm tra nếu department thay đổi
+        if ($oldDepartmentId != $request->department_id) {
+            $this->notifyDepartmentStaff($ticket);
+        }
+        
         $emailSubject = $this->getEmailSubject($ticket, $request->status);
         $this->updateTicketStatus($ticket, $request->status);
 
-        $ticket->logAction(auth()->user()->id, $ticket->__toString());
         $ticket->saveAttachments($request->file('attachments'));
-        $ticket->update($request->all());
+        $ticket->save();
+        $ticket->logAction(auth()->user()->id, $ticket->__toString());
 
         $this->sendTicketUpdateEmail($ticket, $request, $emailSubject);
 
+        if (auth()->user()->admin != 1 && $oldDepartmentId != $request->department_id) {
+            return redirect()->route('admin.tickets.index')->with('success', 'Ticket updated successfully.');
+        }
+
         return redirect()->back()->with('success', 'Ticket updated successfully.');
     }
+
 
     private function getEmailSubject($ticket, $status)
     {
@@ -238,6 +256,27 @@ class TicketController extends Controller
         ];
 
         Mail::to($ticket->customer->email)->queue(new TicketUpdatedEmail($emailData, $emailSubject));
+
+    }
+    private function notifyDepartmentStaff($ticket)
+    {
+        $departmentEmails = $ticket->department->users->pluck('email')->toArray();
+        foreach ($departmentEmails as $email) {
+            $ticketData = [
+                'staff_name' => $ticket->department->users->where('email', $email)->first()->name,
+                'customer' => $ticket->customer->name,
+                'ticket_url' => route('admin.tickets.edit', $ticket->id),
+                'department' => $ticket->department->name,
+                'ticket_type' => $ticket->ticketType->name,
+                'title' => $ticket->title,
+                'description' => $ticket->description,
+                'priority' => $ticket->priority,
+                'status' => $ticket->status,
+                'created_at' => $ticket->created_at ? Carbon::parse($ticket->created_at)->format('d M Y H:i:s') : '',
+                'updated_at' => $ticket->updated_at ? Carbon::parse($ticket->updated_at)->format('d M Y H:i:s') : ''
+            ];
+            Mail::to($email)->queue(new NewTicketAssignedEmail($ticketData));
+        }
     }
 
     public function destroy($id)

@@ -52,7 +52,8 @@ class DepartmentController extends Controller
     public function edit($id)
     {
         $department = Department::findOrFail($id);
-        return view('admin.departments.edit', compact('department'));
+        $users = $department->users()->get();
+        return view('admin.departments.edit', compact('department', 'users'));
     }
 
     public function update(Request $request, $id)

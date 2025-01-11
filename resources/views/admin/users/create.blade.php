@@ -69,16 +69,25 @@
                                             <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Female</option>
                                             <option value="other" {{ old('gender') == 'other' ? 'selected' : '' }}>Other</option>
                                         </select>
+                                        @error('gender')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     
                                     <div class="col-md-6">
                                         <label for="date_of_birth" class="form-label">Date of Birth</label>
                                         <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="{{ old('date_of_birth') }}">
+                                        @error('date_of_birth')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     
                                     <div class="col-md-6">
                                         <label for="address" class="form-label">Address</label>
                                         <input type="text" class="form-control" id="address" name="address" value="{{ old('address') }}">
+                                        @error('address')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     
                                     <div class="col-md-6">
@@ -97,6 +106,9 @@
                                                 <option value="{{ $role->id }}" {{ old('role') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
                                             @endforeach
                                         </select>
+                                        @error('role')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-6">
@@ -107,6 +119,9 @@
                                                 <option value="{{ $department->id }}" {{ old('department') == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
                                             @endforeach
                                         </select>
+                                        @error('department_id')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-6">

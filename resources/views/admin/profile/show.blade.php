@@ -38,6 +38,9 @@
                                     <div class="col-md-6">
                                         <label for="name" class="form-label">Name</label>
                                         <input type="text" class="form-control" id="name" name="name" value="{{ $user->name }}">
+                                        @error('name')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     
                                     <div class="col-md-6">
@@ -64,21 +67,30 @@
                                             <option value="female" {{ $user->gender == 'female' ? 'selected' : '' }}>Female</option>
                                             <option value="other" {{ $user->gender == 'other' ? 'selected' : '' }}>Other</option>
                                         </select>
+                                        @error('gender')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     
                                     <div class="col-md-6">
                                         <label for="date_of_birth" class="form-label">Date of Birth</label>
                                         <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="{{ $user->date_of_birth }}">
+                                        @error('date_of_birth')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     
                                     <div class="col-md-6">
                                         <label for="address" class="form-label">Address</label>
                                         <input type="text" class="form-control" id="address" name="address" value="{{ $user->address }}">
+                                        @error('address')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-6">
                                         <label for="department" class="form-label">Department</label>
-                                        <input type="text" class="form-control" id="department" value="{{ $user->department->name }}" readonly>
+                                        <input type="text" class="form-control" id="department" value="{{ $user->department ? $user->department->name : '' }}" readonly>
                                     </div>
                                 </div>
                             </div>
